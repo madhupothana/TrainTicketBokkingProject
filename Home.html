@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="ISO-8859-1">
+	<title>TrainTicketBooking</title>
+</head>
+
+<body style="background-color: skyblue;">
+	<center>
+		<br>
+		<h1>Train Ticket Bookings</h1>
+		<br>
+		<lable>From :<select id="from">
+				<option>select</option>
+			</select></lable>
+		<lable>To :<select id="to">
+				<option>select</option>
+			</select></lable>
+		<button id="b" onclick="Serach()">Search</button>
+		<br><br><br>
+		<lable>Trains :<select id="trains">
+				<option>select</option>
+			</select></lable><br><br><br>
+		<lable>Class :<select id="class">
+				<option>select</option>
+			</select></lable><br><br>
+		<lable>To :<input type="date" id="to">
+			<option>select</option></input>
+		</lable><br><br><br>
+	</center>
+	<script>
+		const mad = new XMLHttpRequest();
+		mad.open('GET', 'TicketServlet', true);
+		mad.onreadystatechange = function () {
+			console.log('Madhu');
+			if (mad.readyState === 4 && mad.status === 200) {
+				//console.log(mad.responseText);
+				const data = JSON.parse(mad.responseText);
+				console.log(data);
+				Process(data);
+			}
+		}
+		mad.send();
+
+		function Process(data) {
+			const from = document.getElementById('from');
+			data.forEach(function (item) {
+				const op = document.createElement('option');
+				op.textContent = item.from;
+				from.appendChild(op);
+			});
+			const to = document.getElementById('to');
+			data.forEach(function (item) {
+				const op = document.createElement('option');
+				op.textContent = item.to;
+				to.appendChild(op);
+			});
+
+		}
+
+		function Serach() {
+			const mad = new XMLHttpRequest();
+			mad.open('GET', 'Trains', true);
+			mad.onreadystatechange = function () {
+				console.log('Madhu');
+				if (mad.readyState === 4 && mad.status === 200) {
+					//console.log(mad.responseText);
+					const data = JSON.parse(mad.responseText);
+					console.log(data);
+					Process(data);
+				}
+			}
+			mad.send();
+
+		}
+	</script>
+</body>
+
+</html>
