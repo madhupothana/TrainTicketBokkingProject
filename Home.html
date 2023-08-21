@@ -24,25 +24,68 @@
 			</select></lable><br><br><br>
 		<lable>Class :<select id="class">
 				<option>select</option>
+				<option>AC</option>
+				<option>Sleeper</option>
+				<option>General</option>
 			</select></lable><br><br>
-		<lable>To :<input type="date" id="to">
-			<option>select</option></input>
+		<lable>To :<input type="date" id="date"></input>
 		</lable><br><br><br>
+
+		<lable>Name :<input type="text" id="name"></input></lable>
+		<lable>Gender :<input type="text" id="gender"></input></lable>
+		<lable>Age :<input type="text" id="age"></input></lable><br><br>
+		<button id="add" onclick="Add()">Add</button><br><br>
+
+		<table id="table" border="1">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Gender</th>
+					<th>Age</th>
+					<th>Remove</th>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table><br><br>
+
+		<button id="book" onclick="Book()">Book Ticket</button><br><br>
 	</center>
 	<script>
+		var pass = "";
+		function Book() {
+			var from = document.getElementById("from").value;
+			var to = document.getElementById("to").value;
+			var train = document.getElementById("trains").value;
+			var clas = document.getElementById("class").value;
+			var date = document.getElementById("date").value;
+			var tic = "from=" + from + "&to=" + to + "&train=" + train + "&class=" + clas + "&date=" + date;
+			const mad = new XMLHttpRequest();
+			mad.open('GET', 'BookingServlet?'+tic+pass, true);
+			mad.onreadystatechange = function () {
+				if (mad.readyState === 4 && mad.status === 200) {
+					//console.log(mad.responseText);
+					const data = mad.responseText;
+					document.body.innerHTML=data;
+					console.log(data);
+				}
+			}
+			mad.send();
+
+
+		}
+
+
 		const mad = new XMLHttpRequest();
 		mad.open('GET', 'TicketServlet', true);
 		mad.onreadystatechange = function () {
-			console.log('Madhu');
 			if (mad.readyState === 4 && mad.status === 200) {
 				//console.log(mad.responseText);
 				const data = JSON.parse(mad.responseText);
-				console.log(data);
 				Process(data);
 			}
 		}
 		mad.send();
-
 		function Process(data) {
 			const from = document.getElementById('from');
 			data.forEach(function (item) {
@@ -61,18 +104,58 @@
 
 		function Serach() {
 			const mad = new XMLHttpRequest();
-			mad.open('GET', 'Trains', true);
+			var to = document.getElementById('to').value;
+			var from = document.getElementById('from').value;
+			mad.open('GET', 'Trains?from=' + from + '&to=' + to, true);
 			mad.onreadystatechange = function () {
-				console.log('Madhu');
 				if (mad.readyState === 4 && mad.status === 200) {
 					//console.log(mad.responseText);
 					const data = JSON.parse(mad.responseText);
-					console.log(data);
-					Process(data);
+					Trains(data);
 				}
 			}
 			mad.send();
 
+		}
+		function Trains(data) {
+			const from = document.getElementById('trains');
+			data.forEach(function (item) {
+				const op = document.createElement('option');
+				op.textContent = item.Train;
+				from.appendChild(op);
+			});
+		}
+
+		function Add() {
+			var t = document.getElementById("table");
+			var tb = document.getElementById("tbody");
+			var tr = document.createElement("tr");
+			var td1 = document.createElement("td");
+			var td2 = document.createElement("td");
+			var td3 = document.createElement("td");
+			var td4 = document.createElement("td");
+			var n = document.getElementById("name").value;
+			var g = document.getElementById("gender").value;
+			var a = document.getElementById("age").value;
+			td1.textContent = (n);
+			td2.textContent = (g);
+			td3.textContent = (a);
+			tr.appendChild(td1);
+			tr.appendChild(td2);
+			tr.appendChild(td3);
+
+			var btn = document.createElement("button");
+			btn.textContent = "remove";
+			td4.appendChild(btn);
+			tr.appendChild(td4);
+			tb.appendChild(tr);
+			t.append(tb);
+			btn.addEventListener('click', function () {
+				var t = this.parentNode.parentNode;
+				t.innerHTML = "";
+			});
+
+			pass += "&name=" + n + "&gender=" + g + "&age=" + a;
 		}
 	</script>
 </body>
